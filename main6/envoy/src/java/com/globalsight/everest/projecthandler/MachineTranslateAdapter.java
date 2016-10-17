@@ -35,6 +35,7 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.globalsight.machineTranslation.tildemt.TildeMTService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.google.translate.api.v2.core.Translator;
@@ -110,6 +111,9 @@ public class MachineTranslateAdapter
                 break;
             case Google_Translate:
                 setGoogleParams(p_request, mtProfile);
+                break;
+            case TildeMT:
+                setTildeParams(p_request, mtProfile);
                 break;
         }
     }
@@ -453,6 +457,30 @@ public class MachineTranslateAdapter
         mtProfile.setAccountinfo(aoMtAccountNumber);
     }
 
+    private void setTildeParams(HttpServletRequest p_request,
+                               MachineTranslationProfile mtProfile)
+    {
+        String url = p_request.getParameter(MTProfileConstants.MT_TILDEMT_URL)
+                .trim();
+
+        if (StringUtils.isNotBlank(url))
+        {
+            mtProfile.setUrl(url);
+        }
+        String key = p_request.getParameter(MTProfileConstants.MT_TILDEMT_CLIENTID)
+                .trim();
+        if (StringUtils.isNotBlank(key))
+        {
+            mtProfile.setPassword(key);
+        }
+        String systemId = p_request.getParameter(MTProfileConstants.MT_TILDEMT_SYSTEMID)
+                .trim();
+        if (StringUtils.isNotBlank(key))
+        {
+            mtProfile.setCategory(systemId);
+        }
+    }
+
     public boolean testMTCommonOptions(MachineTranslationProfile mtProfile,
             PrintWriter writer) throws JSONException
     {
@@ -473,6 +501,8 @@ public class MachineTranslateAdapter
                 return testDoMT(mtProfile, writer);
             case Google_Translate:
                 return testGoogle(mtProfile, writer);
+            case TildeMT:
+                return testTildeMTHost(mtProfile, writer);
         }
 
         return false;
@@ -880,6 +910,34 @@ public class MachineTranslateAdapter
             jso.put("ExceptionInfo", errString);
             writer.write(jso.toString());
 
+            return false;
+        }
+        return true;
+    }
+
+    private boolean testTildeMTHost(MachineTranslationProfile mtProfile,
+                                    PrintWriter writer) throws JSONException
+    {
+        String url = mtProfile.getUrl();
+        String key = mtProfile.getPassword();
+        String systemId = mtProfile.getCategory();
+
+        try
+        {
+            TildeMTService service = new TildeMTService(url, key, "globalsight", "globalsight_client", "client_version");
+            service.Translate("hello", systemId, null, false);
+        }
+        catch (Exception e)
+        {
+            String errString = "TildeMT server is not reachable.";
+            if (StringUtils.isNotEmpty(e.getMessage()))
+            {
+                errString = "TildeMT URL or Key is invalid.";
+                logger.warn(e.getMessage());
+            }
+            JSONObject jso = new JSONObject();
+            jso.put("ExceptionInfo", errString);
+            writer.write(jso.toString());
             return false;
         }
         return true;

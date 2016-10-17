@@ -126,6 +126,21 @@ public enum EngineEnum
     	String getClassName(){
     		return "com.globalsight.machineTranslation.google.GoogleProxy";
     	}
+    },
+    TildeMT
+    {
+        String[] getInfo()
+        {
+            return new String[]
+                    { "mtProfileID", MTProfileConstants.MT_TILDEMT_URL, "port", "username",
+                            MTProfileConstants.MT_TILDEMT_CLIENTID,
+                            MTProfileConstants.MT_TILDEMT_SYSTEMID, "ACCOUNT_NUMBER" };
+        }
+
+        String getClassName()
+        {
+            return "com.globalsight.machineTranslation.tildemt.TildeMTProxy";
+        }
     };
 
     public static EngineEnum getEngine(String name)

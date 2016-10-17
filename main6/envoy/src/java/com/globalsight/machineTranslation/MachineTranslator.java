@@ -33,6 +33,7 @@ public interface MachineTranslator
     public static final String ENGINE_SAFABA = "Safaba";
     public static final String ENGINE_IPTRANSLATOR = "IPTranslator";
     public static final String ENGINE_DOMT = "DoMT";
+    public static final String ENGINE_TILDEMT = "TildeMT";
 
     public static final String PROMT_PTSURL = "ptsUrl";
     public static final String PROMT_USERNAME = "username";

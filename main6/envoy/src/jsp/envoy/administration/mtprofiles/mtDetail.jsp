@@ -481,6 +481,10 @@
         {
         	doMtDiv.style.display='block';
         }
+        else if(selectedEngineName == "TildeMT")
+        {
+            tildeMTDiv.style.display = 'block';
+        }
 
         //2.Display "Save" button or "Next" button
         var okBtn = document.getElementById("OK");
@@ -488,7 +492,8 @@
 		    || selectedEngineName.toLowerCase() == "ms_translator" 
 		    || selectedEngineName.toLowerCase() == "safaba"
 		    || selectedEngineName == "IPTranslator"
-		    || selectedEngineName == "DoMT")
+		    || selectedEngineName == "DoMT"
+		    || selectedEngineName == "TildeMT")
 	    {
 	    	okBtn.value = "<%=lbSave%>";
 	    }
@@ -1150,6 +1155,48 @@
                              	</TABLE>
                              </div>
                         <!-- **************** Google MT Options : End ******************** -->
+
+                        <!-- **************** TildeMT Options : Start ****************** -->
+                        	 <%if ("TildeMT".equalsIgnoreCase(current_engine))
+                        	  {
+                                 mtProfile4val = mtProfile;%>
+                                 <div id="tildeMTDiv" style="display: block;">
+                             <%} else {
+                                 mtProfile4val = new MachineTranslationProfile();%>
+                                 <div id="tildeMTDiv" style="display: none;">
+                             <%}%>
+
+                             	 <TABLE CELLSPACING="2" CELLPADDING="2" BORDER="0" class="standardText" WIDTH="90%">
+                                     <tr>
+                                         <td colspan="3"><b><%=bundle.getString("lb_tm_tildemt_title")%></b></td>
+                                     </tr>
+                                     <tr>
+                                         <td ALIGN="LEFT"><%=bundle.getString("lb_tm_tildemt_url")%><font
+                                             color="red">*</font>:</td>
+                                         <td><INPUT CLASS="standardText" ID="idTildeMTUrl"
+                                             NAME="<%=MTProfileConstants.MT_TILDEMT_URL%>"
+                                             value="<%=mtProfile4val.getUrl()%>" TYPE="text"
+                                             MAXLENGTH="99" SIZE="90" /></td>
+                                     </tr>
+                                     <tr>
+                                         <td ALIGN="LEFT"><%=bundle.getString("lb_tm_tildemt_clientid")%><font
+                                             color="red">*</font>:</td>
+                                         <td><INPUT CLASS="standardText" ID="idTildeMTClientId"
+                                             NAME="<%=MTProfileConstants.MT_TILDEMT_CLIENTID%>"
+                                             value="<%=mtProfile4val.getPassword()%>" TYPE="password"
+                                             MAXLENGTH="99" SIZE="20" /></td>
+                                     </tr>
+                                     <tr>
+                                         <td ALIGN="LEFT"><%=bundle.getString("lb_tm_tildemt_systemid")%><font
+                                             color="red">*</font>:</td>
+                                         <td><INPUT CLASS="standardText" ID="idTildeMTSystemId"
+                                             NAME="<%=MTProfileConstants.MT_TILDEMT_SYSTEMID%>"
+                                             value="<%=mtProfile4val.getPassword()%>" TYPE="password"
+                                             MAXLENGTH="99" SIZE="20" /></td>
+                                     </tr>
+                                 </TABLE>
+                             </div>
+                        <!-- **************** TildeMT Options : End ******************** -->
 
         <INPUT TYPE="BUTTON" VALUE="<%=bundle.getString("lb_cancel")%>"
             ID="Cancel" onclick="submitForm('cancelMTOptions');"/>
