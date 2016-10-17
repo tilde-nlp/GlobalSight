@@ -108,6 +108,7 @@
 	</target>
 
 	<target name="copy">
+		<echo message="**** Copying to ${globalsight_home} ****" />
 		<copy todir="${globalsight_home}/META-INF">
 			<fileset dir="${jbossUtilDir}">
 				<include name="jboss-deployment-structure.xml" />
