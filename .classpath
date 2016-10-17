@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="main6/envoy/src/java"/>
-	<classpathentry kind="src" path="main6/test"/>
 	<classpathentry kind="src" path="main6/diplomat/dev/src/java"/>
+	<classpathentry kind="src" path="main6/envoy/src/java"/>
 	<classpathentry excluding="apidocs.css|build/|doc/|setenv.cmd|setenv.ksh|test/|tools/" kind="src" path="main6/ling"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="main6/tools/lib/common/ant.jar"/>
@@ -118,5 +117,5 @@
 	<classpathentry kind="lib" path="main6/tools/j2eeVendor/jboss/wildfly-10.0.0.Final/server/modules/system/layers/base/org/jboss/resteasy/resteasy-jaxrs/main/resteasy-jaxrs-3.0.14.Final.jar"/>
 	<classpathentry kind="lib" path="main6/tools/j2eeVendor/jboss/wildfly-10.0.0.Final/server/modules/system/layers/base/org/jboss/resteasy/resteasy-multipart-provider/main/resteasy-multipart-provider-3.0.14.Final.jar"/>
 	<classpathentry kind="lib" path="main6/tools/lib/common/jodd-3.7.jar" sourcepath="main6/tools/lib/sources/jodd-3.7-sources.jar"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="output" path="main6/bin"/>
 </classpath>
