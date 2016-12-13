@@ -35,7 +35,8 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.globalsight.machineTranslation.tildemt.TildeMTService;
+import com.globalsight.machineTranslation.MTHelper;
+import com.globalsight.machineTranslation.MachineTranslator;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.google.translate.api.v2.core.Translator;
@@ -943,6 +944,20 @@ public class MachineTranslateAdapter
         return true;
     }
 
+    @SuppressWarnings("unchecked")
+    private MachineTranslator getTranslator(MachineTranslationProfile mtProfile){
+        // TODO: currently this method is tested only with TildeMT.
+        // Additional changes might be needed for use with other MT providers.
+        String mtEngine = mtProfile.getMtEngine();
+        MachineTranslator machineTranslator = MTHelper.initMachineTranslator(mtEngine);
+        HashMap paramMap = mtProfile.getParamHM();
+        paramMap.put(MachineTranslator.MT_PROFILE, mtProfile);
+        // TODO: check if all the info needed for engines can be retrieved
+        // from the mtProfile or we should set other stuff in the param map too
+        machineTranslator.setMtParameterMap(paramMap);
+        return machineTranslator;
+    }
+
     private String checkLang(Locale p_locale)
     {
         if (p_locale == null)
@@ -989,6 +1004,15 @@ public class MachineTranslateAdapter
                     return false;
                 }
                 break;
+            case TildeMT:
+                // Didn't put this as the default fallback out of fear of breaking
+                // something that might be relying on the try{} block below (and not
+                // expect to be caught in this block). Nothing TildeMT-specific here
+                try{
+                    return getTranslator(mt).supportsLocalePair(sourcelocale, targetlocale);
+                } catch (Exception ex){
+                    return false;
+                }
         }
         try
         {
