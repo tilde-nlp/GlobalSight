@@ -1,8 +1,8 @@
 package com.globalsight.machineTranslation.tildemt;
 
+import com.globalsight.everest.projecthandler.MachineTranslationProfile;
 import com.globalsight.machineTranslation.MTHelper;
 import com.globalsight.machineTranslation.MachineTranslationException;
-import org.apache.commons.lang.NotImplementedException;
 import org.apache.http.NameValuePair;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.config.RequestConfig;
@@ -93,6 +93,7 @@ public class TildeMTService {
     }
 
     public TranslateResult Translate(String text, String systemId, String termsCorporaId, Boolean useQE)
+            throws MachineTranslationException
     {
         RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(getMaxWaitTime() * 1000).build();
         try (CloseableHttpClient httpClient = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig).build()){
@@ -108,9 +109,8 @@ public class TildeMTService {
             String json = readFromBuffer(rd);
             return jsonToTranslateResult(json);
         } catch (IOException | URISyntaxException | JSONException e){
-
+            throw new MachineTranslationException(e);
         }
-        throw new NotImplementedException();
     }
 
 

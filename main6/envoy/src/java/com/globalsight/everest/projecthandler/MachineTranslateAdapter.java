@@ -23,6 +23,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -37,6 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.globalsight.machineTranslation.MTHelper;
 import com.globalsight.machineTranslation.MachineTranslator;
+import com.globalsight.machineTranslation.tildemt.TildeMTProxy;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.google.translate.api.v2.core.Translator;
@@ -917,8 +919,18 @@ public class MachineTranslateAdapter
     }
 
     private boolean testTildeMTHost(MachineTranslationProfile mtProfile,
-                                    PrintWriter writer) throws JSONException
+                                    PrintWriter writer)
     {
+        MachineTranslator mtProxy = getTranslator(mtProfile);
+        // Ideally the TestHost() method which we're going to use or similar
+        // would be a part of the MachineTranslator interface and we could
+        // avoid all the madness with MT provider specific checks all over
+        // this class. This isn't the case though so for now the least I
+        // can do is to have TildeMTProxy be the only one that implements
+        // the method and move as much of the Tilde MT specific business
+        // logic there to not add more cruft to his class.
+        TildeMTProxy tildeMt = (TildeMTProxy) mtProxy;
+        /*
         String url = mtProfile.getUrl();
         String key = mtProfile.getPassword();
         String systemId = mtProfile.getCategory();
@@ -942,6 +954,8 @@ public class MachineTranslateAdapter
             return false;
         }
         return true;
+        */
+        return tildeMt.TestHost();
     }
 
     @SuppressWarnings("unchecked")

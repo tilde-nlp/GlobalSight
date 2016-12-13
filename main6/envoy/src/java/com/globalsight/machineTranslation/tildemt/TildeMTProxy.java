@@ -46,8 +46,8 @@ public class TildeMTProxy extends AbstractTranslator {
         TildeMTService service;
         try {
             service = new TildeMTService(
-                    (String) paramMap.get(MTProfileConstants.MT_TILDEMT_URL),
-                    (String) paramMap.get(MTProfileConstants.MT_TILDEMT_CLIENTID),
+                    mtProfile.getUrl(),
+                    mtProfile.getPassword(),
                     "GlobalSight",
                     "Client", // TODO
                     "ClientVersion"  // TODO
@@ -57,11 +57,20 @@ public class TildeMTProxy extends AbstractTranslator {
         }
         TranslateResult res = service.Translate(
                         p_string,
-                        (String) paramMap.get(MTProfileConstants.MT_TILDEMT_SYSTEMID),
+                        mtProfile.getCategory(),
                         null,
                         false
         );
 
         return res.Translation;
+    }
+
+    public boolean TestHost() {
+        try {
+            doTranslation(null, null, "hello");
+        } catch (Exception e){
+            return false;
+        }
+        return true;
     }
 }
