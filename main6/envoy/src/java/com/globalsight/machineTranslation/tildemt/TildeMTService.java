@@ -1,6 +1,5 @@
 package com.globalsight.machineTranslation.tildemt;
 
-import com.globalsight.everest.projecthandler.MachineTranslationProfile;
 import com.globalsight.machineTranslation.MTHelper;
 import com.globalsight.machineTranslation.MachineTranslationException;
 import org.apache.http.NameValuePair;
@@ -36,6 +35,12 @@ public class TildeMTService {
     private String appId;
     private URIBuilder uriBuilder;
     private String key;
+
+    public TildeMTService(String url, String key) throws URISyntaxException
+    {
+        this.uriBuilder = new URIBuilder(url);
+        this.key = key;
+    }
 
     public TildeMTService(String url, String key, String appId, String client, String clientVersion) throws URISyntaxException {
         this.uriBuilder = new URIBuilder(url);
@@ -74,14 +79,51 @@ public class TildeMTService {
         return String.join(",", options);
     }
 
-    private List<NameValuePair> getParams(String text, String systemId, String termsCorporaId, Boolean useQE){
+    private List<NameValuePair> getRequestParams(String systemId, String termsCorporaId, Boolean useQE){
         List<NameValuePair> params = new LinkedList<>();
         params.add(new BasicNameValuePair("systemId", systemId));
         params.add(new BasicNameValuePair("appID", this.appId));
-        params.add(new BasicNameValuePair("text", text));
         String options = getOptions(termsCorporaId, useQE);
         params.add(new BasicNameValuePair("options", options));
         return params;
+    }
+
+    public TranslateResult Translate(String text, String systemId, String termsCorporaId, Boolean useQE)
+            throws MachineTranslationException
+    {
+        List<NameValuePair> params = getRequestParams(systemId, termsCorporaId, useQE);
+        return Translate(text, params);
+    }
+
+    public TranslateResult Translate(String text, List<NameValuePair> requestParams)
+            throws MachineTranslationException
+    {
+        requestParams.add(new BasicNameValuePair("text", text));
+        URI uri;
+        try {
+            uri = this.uriBuilder
+                    .addParameters(requestParams)
+                    .build();
+        } catch (URISyntaxException e) {
+            throw new MachineTranslationException(e);
+        }
+        HttpGet request = new HttpGet(uri);
+        request.setHeader("client-id", this.key);
+        return makeRequest(request);
+    }
+
+    private TranslateResult makeRequest(HttpGet request) throws MachineTranslationException
+    {
+        RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(getMaxWaitTime() * 1000).build();
+        try (CloseableHttpClient httpClient = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig).build()){
+            HttpResponse response = httpClient.execute(request);
+            BufferedReader rd = new BufferedReader(
+                    new InputStreamReader(response.getEntity().getContent()));
+            String json = readFromBuffer(rd);
+            return jsonToTranslateResult(json);
+        } catch (IOException | JSONException e){
+            throw new MachineTranslationException(e);
+        }
     }
 
     private TranslateResult jsonToTranslateResult(String jsonText) throws JSONException{
@@ -90,27 +132,6 @@ public class TildeMTService {
         res.Translation = json.getString("translation");
         res.QeScore = json.getDouble("qualityEstimate");
         return res;
-    }
-
-    public TranslateResult Translate(String text, String systemId, String termsCorporaId, Boolean useQE)
-            throws MachineTranslationException
-    {
-        RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(getMaxWaitTime() * 1000).build();
-        try (CloseableHttpClient httpClient = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig).build()){
-            List<NameValuePair> params = getParams(text, systemId, termsCorporaId, useQE);
-            URI uri = this.uriBuilder
-                    .addParameters(params)
-                    .build();
-            HttpGet request = new HttpGet(uri);
-            request.setHeader("client-id", this.key);
-            HttpResponse response = httpClient.execute(request);
-            BufferedReader rd = new BufferedReader(
-                    new InputStreamReader(response.getEntity().getContent()));
-            String json = readFromBuffer(rd);
-            return jsonToTranslateResult(json);
-        } catch (IOException | URISyntaxException | JSONException e){
-            throw new MachineTranslationException(e);
-        }
     }
 
 

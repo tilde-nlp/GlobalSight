@@ -72,7 +72,9 @@
 <SCRIPT LANGUAGE="JavaScript" SRC="/globalsight/includes/setStyleSheet.js"></SCRIPT>
 <script type="text/javascript" src="/globalsight/jquery/jquery-1.6.4.min.js"></script>
 <SCRIPT language=JavaScript1.2 SRC="/globalsight/includes/jquery.form.js"></SCRIPT>
-<SCRIPT language=JavaScript1.2 SRC="/globalsight/includes/jquery.loadmask.min.js"></SCRIPT>
+<SCRIPT language=JavaScript1.2 SRC="/globalsight/includes/jquery.loadmask.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/0.7.22/webcomponents.js"></SCRIPT>
+<link rel="import" href="/globalsight/includes/tildemt-selector.html">
 <%@ include file="/envoy/wizards/guidesJavascript.jspIncl"%>
 <%@ include file="/envoy/common/warning.jspIncl"%>
 
@@ -192,12 +194,27 @@
 			$("#OK").attr("disabled",true);
 		    //var isShowInEditor = $("#idShowInEditor").is(":checked");
 			var engine_name = document.getElementById('mtEngine').value;
-			if(forceSave){
-				MTOptionsForm.action = '<%=saveMTOptionsUrl%>';
-				MTOptionsForm.submit();
-			} else {
-				testHost(engine_name);
+
+			// The TildeMT configuration UI is implemented as a standalone webcomponent;
+			// need to retrieve its state manually
+			if (engine_name == "TildeMT") {
+			    var component = document.getElementById("tildemt");
+			    var state = component.saveAndGetState();
+			    var stateString = JSON.stringify(state);
+			    if (state){
+			        document.getElementById("idTildeMTStateJson").value = stateString;
+			    } else {
+			        return;
+			    }
 			}
+			// Don't need to use testHost() on TildeMT, since all of the validation
+			// is already done client-side.
+			if(forceSave || engine_name == "TildeMT"){
+                MTOptionsForm.action = '<%=saveMTOptionsUrl%>';
+                MTOptionsForm.submit();
+            } else {
+                testHost(engine_name);
+            }
 		}
 	}
 	
@@ -1195,6 +1212,18 @@
                                              MAXLENGTH="99" SIZE="20" /></td>
                                      </tr>
                                  </TABLE>
+                                 <tildemt-selector id="tildemt" savehidden></tildemt-selector>
+                                 <% String tildeMTJson = mtProfile4val.getJsonInfo(); %>
+                                 <input id="idTildeMTStateJson" style="display: none"
+                                 name="<%=MTProfileConstants.MT_TILDEMT_STATE_JSON%>"
+                                 value='<%=m_xmlEncoder.encodeStringBasic(tildeMTJson)%>'/>
+                                 <script>
+                                     var stateString = document.getElementById("idTildeMTStateJson").value;
+                                     if (stateString) {
+                                         var tildemt = document.getElementById("tildemt");
+                                         tildemt.setState(JSON.parse(stateString));
+                                     }
+                                 </script>
                              </div>
                         <!-- **************** TildeMT Options : End ******************** -->
 

@@ -229,4 +229,5 @@ public interface MTProfileConstants
     public static final String MT_TILDEMT_URL = "mt_tildemt_url";
     public static final String MT_TILDEMT_CLIENTID = "mt_tildemt_clientid";
     public static final String MT_TILDEMT_SYSTEMID = "mt_tildemt_systemid";
+    public static final String MT_TILDEMT_STATE_JSON = "mt_tildemt_state_json";
 }

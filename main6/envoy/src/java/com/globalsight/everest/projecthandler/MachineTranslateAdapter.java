@@ -482,6 +482,12 @@ public class MachineTranslateAdapter
         {
             mtProfile.setCategory(systemId);
         }
+        String json = p_request.getParameter(MTProfileConstants.MT_TILDEMT_STATE_JSON)
+                .trim();
+        if (StringUtils.isNotBlank(json))
+        {
+            mtProfile.setJsonInfo(json);
+        }
     }
 
     public boolean testMTCommonOptions(MachineTranslationProfile mtProfile,
