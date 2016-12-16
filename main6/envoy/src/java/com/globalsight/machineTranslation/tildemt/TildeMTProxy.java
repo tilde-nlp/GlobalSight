@@ -115,7 +115,7 @@ public class TildeMTProxy extends AbstractTranslator {
             try {
                 item = jso.get(key);
             } catch (JSONException e) { throw new Error(e); }  // This should newer happen
-            params.add(new BasicNameValuePair("systemId", item.toString()));
+            params.add(new BasicNameValuePair(key, item.toString()));
         }
         return params;
     }
