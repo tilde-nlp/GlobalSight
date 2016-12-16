@@ -133,8 +133,7 @@ public enum EngineEnum
         {
             return new String[]
                     { "mtProfileID", MTProfileConstants.MT_TILDEMT_URL, "port", "username",
-                            MTProfileConstants.MT_TILDEMT_CLIENTID,
-                            MTProfileConstants.MT_TILDEMT_SYSTEMID, "ACCOUNT_NUMBER" };
+                            "password", "category", "account_number" };
         }
 
         String getClassName()

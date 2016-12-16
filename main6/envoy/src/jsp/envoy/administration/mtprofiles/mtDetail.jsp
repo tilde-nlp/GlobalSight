@@ -1195,22 +1195,6 @@
                                              value="<%=mtProfile4val.getUrl()%>" TYPE="text"
                                              MAXLENGTH="99" SIZE="90" /></td>
                                      </tr>
-                                     <tr>
-                                         <td ALIGN="LEFT"><%=bundle.getString("lb_tm_tildemt_clientid")%><font
-                                             color="red">*</font>:</td>
-                                         <td><INPUT CLASS="standardText" ID="idTildeMTClientId"
-                                             NAME="<%=MTProfileConstants.MT_TILDEMT_CLIENTID%>"
-                                             value="<%=mtProfile4val.getPassword()%>" TYPE="password"
-                                             MAXLENGTH="99" SIZE="20" /></td>
-                                     </tr>
-                                     <tr>
-                                         <td ALIGN="LEFT"><%=bundle.getString("lb_tm_tildemt_systemid")%><font
-                                             color="red">*</font>:</td>
-                                         <td><INPUT CLASS="standardText" ID="idTildeMTSystemId"
-                                             NAME="<%=MTProfileConstants.MT_TILDEMT_SYSTEMID%>"
-                                             value="<%=mtProfile4val.getPassword()%>" TYPE="password"
-                                             MAXLENGTH="99" SIZE="20" /></td>
-                                     </tr>
                                  </TABLE>
                                  <tildemt-selector id="tildemt" savehidden></tildemt-selector>
                                  <% String tildeMTJson = mtProfile4val.getJsonInfo(); %>

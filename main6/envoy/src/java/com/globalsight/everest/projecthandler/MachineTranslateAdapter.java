@@ -470,18 +470,6 @@ public class MachineTranslateAdapter
         {
             mtProfile.setUrl(url);
         }
-        String key = p_request.getParameter(MTProfileConstants.MT_TILDEMT_CLIENTID)
-                .trim();
-        if (StringUtils.isNotBlank(key))
-        {
-            mtProfile.setPassword(key);
-        }
-        String systemId = p_request.getParameter(MTProfileConstants.MT_TILDEMT_SYSTEMID)
-                .trim();
-        if (StringUtils.isNotBlank(key))
-        {
-            mtProfile.setCategory(systemId);
-        }
         String json = p_request.getParameter(MTProfileConstants.MT_TILDEMT_STATE_JSON)
                 .trim();
         if (StringUtils.isNotBlank(json))
