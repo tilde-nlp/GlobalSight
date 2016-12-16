@@ -510,8 +510,6 @@ public class MachineTranslateAdapter
                 return testDoMT(mtProfile, writer);
             case Google_Translate:
                 return testGoogle(mtProfile, writer);
-            case TildeMT:
-                return testTildeMTHost(mtProfile, writer);
         }
 
         return false;
@@ -924,56 +922,14 @@ public class MachineTranslateAdapter
         return true;
     }
 
-    private boolean testTildeMTHost(MachineTranslationProfile mtProfile,
-                                    PrintWriter writer)
-    {
-        MachineTranslator mtProxy = getTranslator(mtProfile);
-        // Ideally the TestHost() method which we're going to use or similar
-        // would be a part of the MachineTranslator interface and we could
-        // avoid all the madness with MT provider specific checks all over
-        // this class. This isn't the case though so for now the least I
-        // can do is to have TildeMTProxy be the only one that implements
-        // the method and move as much of the Tilde MT specific business
-        // logic there to not add more cruft to his class.
-        TildeMTProxy tildeMt = (TildeMTProxy) mtProxy;
-        /*
-        String url = mtProfile.getUrl();
-        String key = mtProfile.getPassword();
-        String systemId = mtProfile.getCategory();
-
-        try
-        {
-            TildeMTService service = new TildeMTService(url, key, "globalsight", "globalsight_client", "client_version");
-            service.Translate("hello", systemId, null, false);
-        }
-        catch (Exception e)
-        {
-            String errString = "TildeMT server is not reachable.";
-            if (StringUtils.isNotEmpty(e.getMessage()))
-            {
-                errString = "TildeMT URL or Key is invalid.";
-                logger.warn(e.getMessage());
-            }
-            JSONObject jso = new JSONObject();
-            jso.put("ExceptionInfo", errString);
-            writer.write(jso.toString());
-            return false;
-        }
-        return true;
-        */
-        return tildeMt.TestHost();
-    }
-
     @SuppressWarnings("unchecked")
     private MachineTranslator getTranslator(MachineTranslationProfile mtProfile){
-        // TODO: currently this method is tested only with TildeMT.
+        // NOTE: currently this method is tested only with TildeMT.
         // Additional changes might be needed for use with other MT providers.
         String mtEngine = mtProfile.getMtEngine();
         MachineTranslator machineTranslator = MTHelper.initMachineTranslator(mtEngine);
         HashMap paramMap = mtProfile.getParamHM();
         paramMap.put(MachineTranslator.MT_PROFILE, mtProfile);
-        // TODO: check if all the info needed for engines can be retrieved
-        // from the mtProfile or we should set other stuff in the param map too
         machineTranslator.setMtParameterMap(paramMap);
         return machineTranslator;
     }

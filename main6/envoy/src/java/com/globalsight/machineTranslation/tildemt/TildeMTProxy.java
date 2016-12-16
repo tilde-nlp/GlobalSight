@@ -28,9 +28,8 @@ public class TildeMTProxy extends AbstractTranslator {
 
     protected String createLangKey(Locale p_sourceLocale, Locale p_targetLocale)
     {
-        String langKey = String.format("%1$s-%2$s",
+        return String.format("%1$s-%2$s",
                 p_sourceLocale.getLanguage(), p_targetLocale.getLanguage());
-        return langKey;
     }
 
     /**
@@ -118,14 +117,5 @@ public class TildeMTProxy extends AbstractTranslator {
             params.add(new BasicNameValuePair(key, item.toString()));
         }
         return params;
-    }
-
-    public boolean TestHost() {
-        try {
-            doTranslation(null, null, "hello");
-        } catch (Exception e){
-            return false;
-        }
-        return true;
     }
 }
