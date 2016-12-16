@@ -21,7 +21,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -30,9 +29,6 @@ import java.util.List;
 public class TildeMTService {
     private static final Logger logger =
             Logger.getLogger(TildeMTService.class);
-    private String clientVersion;
-    private String client;
-    private String appId;
     private URIBuilder uriBuilder;
     private String key;
 
@@ -40,14 +36,6 @@ public class TildeMTService {
     {
         this.uriBuilder = new URIBuilder(url);
         this.key = key;
-    }
-
-    public TildeMTService(String url, String key, String appId, String client, String clientVersion) throws URISyntaxException {
-        this.uriBuilder = new URIBuilder(url);
-        this.key = key;
-        this.appId = appId;
-        this.client = client;
-        this.clientVersion = clientVersion;
     }
 
     private String readFromBuffer(BufferedReader reader) throws IOException{
@@ -59,41 +47,9 @@ public class TildeMTService {
         return result.toString();
     }
 
-    private Boolean isNullOrEmpty(String str){
-        return str == null || str.isEmpty();
-    }
-
-    private String getOptions(String termsCorporaId, Boolean useQE)
-    {
-        List<String> options = new LinkedList<>();
-        if (!isNullOrEmpty(this.client) && !isNullOrEmpty(this.clientVersion))
-        {
-            options.add(String.format("client=%1$s", client));
-            options.add(String.format("version=%1$s", clientVersion));
-        }
-        if (!isNullOrEmpty(termsCorporaId))
-            options.add(String.format("termCorpusId=%1$s", termsCorporaId));
-        if (useQE)
-            options.add("qe");
-
-        return String.join(",", options);
-    }
-
-    private List<NameValuePair> getRequestParams(String systemId, String termsCorporaId, Boolean useQE){
-        List<NameValuePair> params = new LinkedList<>();
-        params.add(new BasicNameValuePair("systemId", systemId));
-        params.add(new BasicNameValuePair("appID", this.appId));
-        String options = getOptions(termsCorporaId, useQE);
-        params.add(new BasicNameValuePair("options", options));
-        return params;
-    }
-
-    public TranslateResult Translate(String text, String systemId, String termsCorporaId, Boolean useQE)
-            throws MachineTranslationException
-    {
-        List<NameValuePair> params = getRequestParams(systemId, termsCorporaId, useQE);
-        return Translate(text, params);
-    }
+//    private Boolean isNullOrEmpty(String str){
+//        return str == null || str.isEmpty();
+//    }
 
     public TranslateResult Translate(String text, List<NameValuePair> requestParams)
             throws MachineTranslationException
