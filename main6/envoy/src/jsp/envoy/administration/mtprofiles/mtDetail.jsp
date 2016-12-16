@@ -72,8 +72,8 @@
 <SCRIPT LANGUAGE="JavaScript" SRC="/globalsight/includes/setStyleSheet.js"></SCRIPT>
 <script type="text/javascript" src="/globalsight/jquery/jquery-1.6.4.min.js"></script>
 <SCRIPT language=JavaScript1.2 SRC="/globalsight/includes/jquery.form.js"></SCRIPT>
-<SCRIPT language=JavaScript1.2 SRC="/globalsight/includes/jquery.loadmask.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/0.7.22/webcomponents.js"></SCRIPT>
+<SCRIPT language=JavaScript1.2 SRC="/globalsight/includes/jquery.loadmask.min.js"></SCRIPT>
+<SCRIPT src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/0.7.22/webcomponents.js"></SCRIPT>
 <link rel="import" href="/globalsight/includes/tildemt-selector.html">
 <%@ include file="/envoy/wizards/guidesJavascript.jspIncl"%>
 <%@ include file="/envoy/common/warning.jspIncl"%>
@@ -1197,10 +1197,16 @@
                                      </tr>
                                  </TABLE>
                                  <tildemt-selector id="tildemt" savehidden></tildemt-selector>
-                                 <% String tildeMTJson = mtProfile4val.getJsonInfo(); %>
+                                 <%
+                                    String tildeMTJson = mtProfile4val.getJsonInfo();
+                                    String escapedJson = "";
+                                    if (tildeMTJson != null) {
+                                        escapedJson = m_xmlEncoder.encodeStringBasic(tildeMTJson);
+                                    }
+                                 %>
                                  <input id="idTildeMTStateJson" style="display: none"
                                  name="<%=MTProfileConstants.MT_TILDEMT_STATE_JSON%>"
-                                 value='<%=m_xmlEncoder.encodeStringBasic(tildeMTJson)%>'/>
+                                 value='<%=escapedJson%>'/>
                                  <script>
                                      var stateString = document.getElementById("idTildeMTStateJson").value;
                                      if (stateString) {
