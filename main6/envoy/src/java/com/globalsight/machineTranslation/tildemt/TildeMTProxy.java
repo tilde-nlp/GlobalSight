@@ -26,6 +26,13 @@ public class TildeMTProxy extends AbstractTranslator {
         return ENGINE_TILDEMT;
     }
 
+    protected String createLangKey(Locale p_sourceLocale, Locale p_targetLocale)
+    {
+        String langKey = String.format("%1$s-%2$s",
+                p_sourceLocale.getLanguage(), p_targetLocale.getLanguage());
+        return langKey;
+    }
+
     /**
      * Returns true if the given locale pair is supported for MT.
      *
@@ -35,9 +42,21 @@ public class TildeMTProxy extends AbstractTranslator {
      * @throws MachineTranslationException
      */
     @Override
-    public boolean supportsLocalePair(Locale p_sourceLocale, Locale p_targetLocale)
-            throws MachineTranslationException {
-        return true;
+    public boolean supportsLocalePair(Locale p_sourceLocale, Locale p_targetLocale) {
+        Map paramMap = getMtParameterMap();
+        MachineTranslationProfile mtProfile = (MachineTranslationProfile) paramMap
+                .get(MachineTranslator.MT_PROFILE);
+        String json = mtProfile.getJsonInfo();
+        try
+        {
+            JSONObject obj = new JSONObject(json);
+            // if the params don't exist json exception will be thrown
+            getParamsFromJson(p_sourceLocale, p_targetLocale, obj);
+            return true;
+        } catch (JSONException e)
+        {
+            return false;
+        }
     }
 
     @Override
@@ -48,21 +67,11 @@ public class TildeMTProxy extends AbstractTranslator {
                 .get(MachineTranslator.MT_PROFILE);
         String json = mtProfile.getJsonInfo();
         JSONObject obj;
-        String clientId;
-        List<NameValuePair> requestParams;
+        ServiceParams params;
         try
         {
             obj = new JSONObject(json);
-            clientId = obj.getString("client-id");
-            JSONObject systems = obj.getJSONObject("systems");
-            String langKey = String.format("%1$s-%2$s",
-                    p_sourceLocale.getLanguage(), p_targetLocale.getLanguage());
-            // There might be no system selected for this language pair
-            // but it is expected that supportsLocalePair() has returned
-            // false for it and doTranslation does not have to worry about it.
-            JSONObject system = systems.getJSONObject(langKey);
-            JSONObject ssytemParams = system.getJSONObject("params");
-            requestParams = jsonObjectToList(ssytemParams);
+            params = getParamsFromJson(p_sourceLocale, p_targetLocale, obj);
         } catch (JSONException e)
         {
             throw new MachineTranslationException(e);
@@ -72,17 +81,30 @@ public class TildeMTProxy extends AbstractTranslator {
         try {
             service = new TildeMTService(
                     mtProfile.getUrl(),
-                    clientId
+                    params.clientId
             );
         } catch (URISyntaxException e){
             throw new MachineTranslationException(e);
         }
-        TranslateResult res = service.Translate(p_string, requestParams);
+        TranslateResult res = service.Translate(p_string, params.requestParams);
 
         return res.Translation;
     }
 
-    private List<NameValuePair> jsonObjectToList(JSONObject jso)
+    protected ServiceParams getParamsFromJson(Locale p_sourceLocale, Locale p_targetLocale, JSONObject obj)
+            throws JSONException
+    {
+        String clientId = obj.getString("client-id");
+        JSONObject systems = obj.getJSONObject("systems");
+
+        String langKey = createLangKey(p_sourceLocale, p_targetLocale);
+        JSONObject system = systems.getJSONObject(langKey);
+        JSONObject systemParams = system.getJSONObject("params");
+        List<NameValuePair> requestParams = jsonObjectToList(systemParams);
+        return new ServiceParams(clientId, requestParams);
+    }
+
+    protected List<NameValuePair> jsonObjectToList(JSONObject jso)
     {
         List<NameValuePair> params = new LinkedList<NameValuePair>();
         Iterator<?> keys = jso.keys();
