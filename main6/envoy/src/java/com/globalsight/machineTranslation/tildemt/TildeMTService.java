@@ -2,6 +2,7 @@ package com.globalsight.machineTranslation.tildemt;
 
 import com.globalsight.machineTranslation.MTHelper;
 import com.globalsight.machineTranslation.MachineTranslationException;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.config.RequestConfig;
@@ -29,12 +30,17 @@ import java.util.List;
 public class TildeMTService {
     private static final Logger logger =
             Logger.getLogger(TildeMTService.class);
-    private URIBuilder uriBuilder;
+    private String baseUrl;
+    private String translatePath = "/TranslateEx";
     private String key;
 
     public TildeMTService(String url, String key) throws URISyntaxException
     {
-        this.uriBuilder = new URIBuilder(url);
+        if (url == null || url.isEmpty())
+        {
+            url = "https://www.letsmt.eu/ws/service.svc/json";
+        }
+        this.baseUrl = StringUtils.stripEnd(url, "/");
         this.key = key;
     }
 
@@ -57,7 +63,7 @@ public class TildeMTService {
         requestParams.add(new BasicNameValuePair("text", text));
         URI uri;
         try {
-            uri = this.uriBuilder
+            uri = new URIBuilder(this.baseUrl + this.translatePath)
                     .addParameters(requestParams)
                     .build();
         } catch (URISyntaxException e) {
