@@ -77,7 +77,7 @@ public class TildeMTProxy extends AbstractTranslator {
         TildeMTService service;
         try {
             service = new TildeMTService(
-                    mtProfile.getUrl(),
+                    null,
                     params.clientId
             );
         } catch (URISyntaxException e){

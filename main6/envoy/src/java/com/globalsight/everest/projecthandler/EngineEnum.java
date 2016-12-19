@@ -132,7 +132,7 @@ public enum EngineEnum
         String[] getInfo()
         {
             return new String[]
-                    { "mtProfileID", MTProfileConstants.MT_TILDEMT_URL, "port", "username",
+                    { "mtProfileID", "url", "port", "username",
                             "password", "category", "account_number" };
         }
 

@@ -1182,20 +1182,7 @@
                                  mtProfile4val = new MachineTranslationProfile();%>
                                  <div id="tildeMTDiv" style="display: none;">
                              <%}%>
-
-                             	 <TABLE CELLSPACING="2" CELLPADDING="2" BORDER="0" class="standardText" WIDTH="90%">
-                                     <tr>
-                                         <td colspan="3"><b><%=bundle.getString("lb_tm_tildemt_title")%></b></td>
-                                     </tr>
-                                     <tr>
-                                         <td ALIGN="LEFT"><%=bundle.getString("lb_tm_tildemt_url")%><font
-                                             color="red">*</font>:</td>
-                                         <td><INPUT CLASS="standardText" ID="idTildeMTUrl"
-                                             NAME="<%=MTProfileConstants.MT_TILDEMT_URL%>"
-                                             value="<%=mtProfile4val.getUrl()%>" TYPE="text"
-                                             MAXLENGTH="99" SIZE="90" /></td>
-                                     </tr>
-                                 </TABLE>
+                                 <h4><%=bundle.getString("lb_tm_tildemt_title")%></h4>
                                  <tildemt-selector id="tildemt" savehidden></tildemt-selector>
                                  <%
                                     String tildeMTJson = mtProfile4val.getJsonInfo();
