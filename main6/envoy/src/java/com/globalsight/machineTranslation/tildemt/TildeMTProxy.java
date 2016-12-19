@@ -67,12 +67,10 @@ public class TildeMTProxy extends AbstractTranslator {
         String json = mtProfile.getJsonInfo();
         JSONObject obj;
         ServiceParams params;
-        try
-        {
+        try {
             obj = new JSONObject(json);
             params = getParamsFromJson(p_sourceLocale, p_targetLocale, obj);
-        } catch (JSONException e)
-        {
+        } catch (JSONException e) {
             throw new MachineTranslationException(e);
         }
 

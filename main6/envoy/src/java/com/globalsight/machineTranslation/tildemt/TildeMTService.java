@@ -5,6 +5,8 @@ import com.globalsight.machineTranslation.MachineTranslationException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -40,7 +42,7 @@ public class TildeMTService {
         {
             url = "https://www.letsmt.eu/ws/service.svc/json";
         }
-        this.baseUrl = StringUtils.stripEnd(url, "/");
+        this.baseUrl = StringUtils.stripEnd(url.trim(), "/").trim();
         this.key = key;
     }
 
@@ -67,7 +69,9 @@ public class TildeMTService {
                     .addParameters(requestParams)
                     .build();
         } catch (URISyntaxException e) {
-            throw new MachineTranslationException(e);
+            String message = String.format("Invalid webservice URL format - \"%1s\", params: %2s",
+                    this.baseUrl + this.translatePath, requestParams.toString());
+            throw new MachineTranslationException(message, e);
         }
         HttpGet request = new HttpGet(uri);
         request.setHeader("client-id", this.key);
@@ -79,6 +83,16 @@ public class TildeMTService {
         RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(getMaxWaitTime() * 1000).build();
         try (CloseableHttpClient httpClient = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig).build()){
             HttpResponse response = httpClient.execute(request);
+            StatusLine status = response.getStatusLine();
+            if (status.getStatusCode() != HttpStatus.SC_OK) {
+                String message;
+                if (status.getStatusCode() == HttpStatus.SC_UNAUTHORIZED) {
+                    message = String.format("Invalid Client ID (%1s)", status.getReasonPhrase());
+                } else {
+                    message = String.format("Translation request failed (%1s)", status.getReasonPhrase());
+                }
+                throw new MachineTranslationException(message);
+            }
             BufferedReader rd = new BufferedReader(
                     new InputStreamReader(response.getEntity().getContent()));
             String json = readFromBuffer(rd);
@@ -88,8 +102,14 @@ public class TildeMTService {
         }
     }
 
-    private TranslateResult jsonToTranslateResult(String jsonText) throws JSONException{
+    private TranslateResult jsonToTranslateResult(String jsonText)
+            throws JSONException, MachineTranslationException {
         JSONObject json = new JSONObject(jsonText);
+        if (json.has("ErrorCode")) {
+            String message = String.format("%1s (%2s)",
+                    json.getString("ErrorMessage"), json.getString("ErrorCode"));
+            throw new MachineTranslationException(message);
+        }
         TranslateResult res = new TranslateResult();
         res.Translation = json.getString("translation");
         res.QeScore = json.getDouble("qualityEstimate");
