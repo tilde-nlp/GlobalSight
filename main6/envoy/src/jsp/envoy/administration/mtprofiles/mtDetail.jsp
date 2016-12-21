@@ -1183,7 +1183,7 @@
                                  <div id="tildeMTDiv" style="display: none;">
                              <%}%>
                                  <h4><%=bundle.getString("lb_tm_tildemt_title")%></h4>
-                                 <tildemt-selector id="tildemt" savehidden></tildemt-selector>
+                                 <tildemt-selector id="tildemt" hiddensave hiddenname></tildemt-selector>
                                  <%
                                     String tildeMTJson = mtProfile4val.getJsonInfo();
                                     String escapedJson = "";
