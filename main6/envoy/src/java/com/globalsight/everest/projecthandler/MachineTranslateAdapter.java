@@ -463,13 +463,6 @@ public class MachineTranslateAdapter
     private void setTildeParams(HttpServletRequest p_request,
                                MachineTranslationProfile mtProfile)
     {
-        String url = p_request.getParameter(MTProfileConstants.MT_TILDEMT_URL)
-                .trim();
-
-        if (StringUtils.isNotBlank(url))
-        {
-            mtProfile.setUrl(url);
-        }
         String json = p_request.getParameter(MTProfileConstants.MT_TILDEMT_STATE_JSON)
                 .trim();
         if (StringUtils.isNotBlank(json))
