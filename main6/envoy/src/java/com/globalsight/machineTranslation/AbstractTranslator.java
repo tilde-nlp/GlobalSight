@@ -162,6 +162,9 @@ public abstract class AbstractTranslator implements MachineTranslator
             case Google_Translate:
                 translatedSegs = trGoogle(sourceLocale, targetLocale, segments, containTags);
                 break;
+            case TildeMT:
+                translatedSegs = doBatchTranslation(sourceLocale, targetLocale, segments);
+                break;
         }
 
         if (translatedSegs != null && translatedSegs.length > 0 && !isHaveRootTag)

@@ -116,4 +116,17 @@ public class TildeMTProxy extends AbstractTranslator {
         }
         return params;
     }
+
+    @Override
+    protected String[] doBatchTranslation(Locale p_sourceLocale,
+                                          Locale p_targetLocale, String[] p_segments)
+            throws MachineTranslationException
+    {
+        String[] translations = new String[p_segments.length];
+        for (int i = 0; i < p_segments.length; i++) {
+            String segment = p_segments[i];
+            translations[i] = doTranslation(p_sourceLocale, p_targetLocale, segment);
+        }
+        return translations;
+    }
 }
