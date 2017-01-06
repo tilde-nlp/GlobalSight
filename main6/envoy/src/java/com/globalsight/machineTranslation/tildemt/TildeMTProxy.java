@@ -1,6 +1,7 @@
 package com.globalsight.machineTranslation.tildemt;
 
 import com.globalsight.everest.projecthandler.MachineTranslationProfile;
+import com.globalsight.everest.webapp.pagehandler.administration.mtprofile.MTProfileConstants;
 import com.globalsight.machineTranslation.AbstractTranslator;
 import com.globalsight.machineTranslation.MachineTranslationException;
 import com.globalsight.machineTranslation.MachineTranslator;
@@ -62,9 +63,7 @@ public class TildeMTProxy extends AbstractTranslator {
     protected String doTranslation(Locale p_sourceLocale, Locale p_targetLocale, String p_string)
             throws MachineTranslationException {
         Map paramMap = getMtParameterMap();
-        MachineTranslationProfile mtProfile = (MachineTranslationProfile) paramMap
-                .get(MachineTranslator.MT_PROFILE);
-        String json = mtProfile.getJsonInfo();
+        String json = (String) paramMap.get(MTProfileConstants.MT_TILDEMT_STATE_JSON);
         JSONObject obj;
         ServiceParams params;
         try {

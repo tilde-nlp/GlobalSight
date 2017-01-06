@@ -175,7 +175,8 @@ public class MachineTranslationProfile implements java.io.Serializable
     {
         return new String[]
         { String.valueOf(getId()), getUrl(), getPort().toString(),
-                getUsername(), getPassword(), getCategory(), getAccountinfo() };
+                getUsername(), getPassword(), getCategory(), getAccountinfo(),
+                getJsonInfo() };
     }
 
     public MachineTranslationProfile()
