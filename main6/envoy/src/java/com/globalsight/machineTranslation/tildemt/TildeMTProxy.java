@@ -84,7 +84,14 @@ public class TildeMTProxy extends AbstractTranslator {
         }
         TranslateResult res = service.Translate(p_string, params.requestParams);
 
-        return res.Translation;
+        Double qeThreshold;
+        try {
+            qeThreshold = getQeThresholdFromJson(obj);
+        } catch (JSONException e) {
+            qeThreshold = null;
+        }
+
+        return qeThreshold == null || res.QeScore >= qeThreshold ? res.Translation : null;
     }
 
     protected ServiceParams getParamsFromJson(Locale p_sourceLocale, Locale p_targetLocale, JSONObject obj)
@@ -98,6 +105,14 @@ public class TildeMTProxy extends AbstractTranslator {
         JSONObject systemParams = system.getJSONObject("params");
         List<NameValuePair> requestParams = jsonObjectToList(systemParams);
         return new ServiceParams(clientId, requestParams);
+    }
+
+    protected Double getQeThresholdFromJson(JSONObject obj)
+            throws JSONException
+    {
+        JSONObject systems = obj.getJSONObject("systems");
+        Double threshold = systems.getDouble("qeThreshold");
+        return threshold;
     }
 
     protected List<NameValuePair> jsonObjectToList(JSONObject jso)

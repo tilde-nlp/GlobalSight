@@ -112,7 +112,11 @@ public class TildeMTService {
         }
         TranslateResult res = new TranslateResult();
         res.Translation = json.getString("translation");
-        res.QeScore = json.getDouble("qualityEstimate");
+        try {
+            res.QeScore = json.getDouble("qualityEstimate");
+        } catch(JSONException e) {
+            res.QeScore = null;
+        }
         return res;
     }
 
