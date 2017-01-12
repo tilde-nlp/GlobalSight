@@ -89,7 +89,14 @@ public class TildeMTService {
                 if (status.getStatusCode() == HttpStatus.SC_UNAUTHORIZED) {
                     message = String.format("Invalid Client ID (%1s)", status.getReasonPhrase());
                 } else {
-                    message = String.format("Translation request failed (%1s)", status.getReasonPhrase());
+                    BufferedReader rd = new BufferedReader(
+                            new InputStreamReader(response.getEntity().getContent()));
+                    String json = readFromBuffer(rd);
+                    try {
+                        message = jsonToErrorMessage(json);
+                    } catch (JSONException e){
+                        message = String.format("Translation request failed (%1s)", status.getReasonPhrase());
+                    }
                 }
                 throw new MachineTranslationException(message);
             }
@@ -105,11 +112,6 @@ public class TildeMTService {
     private TranslateResult jsonToTranslateResult(String jsonText)
             throws JSONException, MachineTranslationException {
         JSONObject json = new JSONObject(jsonText);
-        if (json.has("ErrorCode")) {
-            String message = String.format("%1s (%2s)",
-                    json.getString("ErrorMessage"), json.getString("ErrorCode"));
-            throw new MachineTranslationException(message);
-        }
         TranslateResult res = new TranslateResult();
         res.Translation = json.getString("translation");
         try {
@@ -118,6 +120,13 @@ public class TildeMTService {
             res.QeScore = null;
         }
         return res;
+    }
+
+    private String jsonToErrorMessage(String jsonText)
+            throws JSONException{
+        JSONObject json = new JSONObject(jsonText);
+        return String.format("%1s (%2s)",
+                json.getString("ErrorMessage"), json.getInt("ErrorCode"));
     }
 
 
