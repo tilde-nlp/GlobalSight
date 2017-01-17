@@ -27,7 +27,7 @@ public class TildeMTProxy extends AbstractTranslator {
         return ENGINE_TILDEMT;
     }
 
-    protected String createLangKey(Locale p_sourceLocale, Locale p_targetLocale)
+    private String createLangKey(Locale p_sourceLocale, Locale p_targetLocale)
     {
         return String.format("%1$s-%2$s",
                 p_sourceLocale.getLanguage(), p_targetLocale.getLanguage());
@@ -94,7 +94,7 @@ public class TildeMTProxy extends AbstractTranslator {
         return qeThreshold == null || res.QeScore >= qeThreshold ? res.Translation : null;
     }
 
-    protected ServiceParams getParamsFromJson(Locale p_sourceLocale, Locale p_targetLocale, JSONObject obj)
+    private ServiceParams getParamsFromJson(Locale p_sourceLocale, Locale p_targetLocale, JSONObject obj)
             throws JSONException
     {
         String clientId = obj.getString("client-id");
@@ -107,7 +107,7 @@ public class TildeMTProxy extends AbstractTranslator {
         return new ServiceParams(clientId, requestParams);
     }
 
-    protected Double getQeThresholdFromJson(Locale p_sourceLocale, Locale p_targetLocale, JSONObject obj)
+    private Double getQeThresholdFromJson(Locale p_sourceLocale, Locale p_targetLocale, JSONObject obj)
             throws JSONException
     {
         JSONObject systems = obj.getJSONObject("systems");
@@ -117,7 +117,7 @@ public class TildeMTProxy extends AbstractTranslator {
         return system.getDouble("qeThreshold");
     }
 
-    protected List<NameValuePair> jsonObjectToList(JSONObject jso)
+    private List<NameValuePair> jsonObjectToList(JSONObject jso)
     {
         List<NameValuePair> params = new LinkedList<NameValuePair>();
         Iterator<?> keys = jso.keys();
