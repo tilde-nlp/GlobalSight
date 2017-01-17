@@ -86,7 +86,7 @@ public class TildeMTProxy extends AbstractTranslator {
 
         Double qeThreshold;
         try {
-            qeThreshold = getQeThresholdFromJson(obj);
+            qeThreshold = getQeThresholdFromJson(p_sourceLocale, p_targetLocale, obj);
         } catch (JSONException e) {
             qeThreshold = null;
         }
@@ -107,12 +107,14 @@ public class TildeMTProxy extends AbstractTranslator {
         return new ServiceParams(clientId, requestParams);
     }
 
-    protected Double getQeThresholdFromJson(JSONObject obj)
+    protected Double getQeThresholdFromJson(Locale p_sourceLocale, Locale p_targetLocale, JSONObject obj)
             throws JSONException
     {
         JSONObject systems = obj.getJSONObject("systems");
-        Double threshold = systems.getDouble("qeThreshold");
-        return threshold;
+
+        String langKey = createLangKey(p_sourceLocale, p_targetLocale);
+        JSONObject system = systems.getJSONObject(langKey);
+        return system.getDouble("qeThreshold");
     }
 
     protected List<NameValuePair> jsonObjectToList(JSONObject jso)
