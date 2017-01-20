@@ -11,6 +11,7 @@ import com.globalsight.util.edit.GxmlUtil;
 import com.globalsight.util.gxml.GxmlElement;
 import com.globalsight.util.gxml.GxmlReader;
 import com.globalsight.util.gxml.TextNode;
+import org.apache.commons.io.output.StringBuilderWriter;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
@@ -172,7 +173,6 @@ public class TildeMTProxy extends AbstractTranslator {
             IOException,
             SAXException,
             MachineTranslationException{
-        StringBuilder restored = new StringBuilder();
         GxmlElement gxmlRoot = MTHelper.getGxmlElement(original);
         DocumentBuilderFactory factory =
                 DocumentBuilderFactory.newInstance();
@@ -184,51 +184,60 @@ public class TildeMTProxy extends AbstractTranslator {
         if (rootNodes.getLength() != 1){
             throw new MachineTranslationException("Invalid XML received from LetsMT");
         }
-        NodeList translationNodes = rootNodes.item(0).getChildNodes();
-        for (int i=0; i < translationNodes.getLength(); i++){
-            Node current = translationNodes.item(i);
-            switch (current.getNodeType()) {
-                case Node.TEXT_NODE:
-                    restored.append(current.getTextContent());
-                    break;
-                case Node.ELEMENT_NODE:
-                    String content = current.getTextContent();
-                    Element element = (Element) current;
-                    String id = element.getAttribute("id");
-                    String type = element.getAttribute("type");
-                    if (type.equals(Integer.toString(GxmlElement.BPT))) {
-                        // means that a <bpt> and an <ept> tag was replaced
-                        // with a single <span> tag with the same id
-
-                        // for BPT and EPT "i" functions similar to "id"
-                        GxmlElement bpt = gxmlRoot.getDescendantByAttributeValue("i", id, GxmlElement.BPT);
-                        GxmlElement ept = gxmlRoot.getDescendantByAttributeValue("i", id, GxmlElement.EPT);
-                        restored.append(bpt.toGxml());
-                        if(content != null) {
-                            restored.append(content);
-                        }
-                        restored.append(ept.toGxml());
-                    } else {
-                        // means that a <ph/> or some other tag was replaced with a
-                        // <span> tag with the same id
-                        // we assume that there hasn't been any translatable content
-                        // inside the tag
-                        Integer typeInt = Integer.parseInt(type);
-                        GxmlElement node = gxmlRoot.getDescendantByAttributeValue("id", id, typeInt);
-                        restored.append(node.toGxml());
-                    }
-                    break;
-                default:
-                    // this should not happen
-                    break;
-            }
-        }
-
+        String restored = _restoreTags(gxmlRoot, rootNodes.item(0));
         int index = original.indexOf(">");
         String head = original.substring(0, index + 1);
         String tail = "</segment>";
 
-        return head + restored.toString() + tail;
+        return head + restored + tail;
+    }
+
+    private String _restoreTags(GxmlElement gxmlRoot, Node current){
+        switch (current.getNodeType()) {
+            case Node.TEXT_NODE:
+                return current.getTextContent();
+            case Node.ELEMENT_NODE:
+                Element element = (Element) current;
+                if ("html".equals(element.getTagName())){
+                    return restoreChildrenTags(gxmlRoot, current);
+                }
+                String id = element.getAttribute("id");
+                String type = element.getAttribute("type");
+                if (type.equals(Integer.toString(GxmlElement.BPT))) {
+                    // means that a <bpt> and an <ept> tag was replaced
+                    // with a single <span> tag with the same id
+
+                    StringBuilder restored = new StringBuilder();
+                    // for BPT and EPT "i" functions similar to "id"
+                    GxmlElement bpt = gxmlRoot.getDescendantByAttributeValue("i", id, GxmlElement.BPT);
+                    GxmlElement ept = gxmlRoot.getDescendantByAttributeValue("i", id, GxmlElement.EPT);
+                    restored.append(bpt.toGxml());
+                    restored.append(restoreChildrenTags(gxmlRoot, current));
+                    restored.append(ept.toGxml());
+                    return restored.toString();
+                } else {
+                    // means that a <ph/> or some other tag was replaced with a
+                    // <span> tag with the same id
+                    // we assume that there hasn't been any translatable content
+                    // inside the tag
+                    Integer typeInt = Integer.parseInt(type);
+                    GxmlElement node = gxmlRoot.getDescendantByAttributeValue("id", id, typeInt);
+                    return node.toGxml();
+                }
+            default:
+                // this should not happen
+                return "";
+        }
+    }
+
+    private String restoreChildrenTags(GxmlElement gxmlRoot, Node current){
+        StringBuilder restored = new StringBuilder();
+        NodeList childNodes = current.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node child = childNodes.item(i);
+            restored.append(_restoreTags(gxmlRoot, child));
+        }
+        return restored.toString();
     }
 
     private ServiceParams getParamsFromJson(Locale p_sourceLocale, Locale p_targetLocale, JSONObject obj)
