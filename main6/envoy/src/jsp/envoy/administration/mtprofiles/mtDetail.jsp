@@ -468,6 +468,7 @@
         var IPTranslatorDiv=document.getElementById("IPTranslatorDiv");
         var doMtDiv=document.getElementById("doMtDiv");
 		var googleDiv = document.getElementById("googleDiv");
+		var tildeMTDiv = document.getElementById("tildeMTDiv");
         
         var engineSelect = document.getElementById("mtEngine");
         var selectedEngineName = engineSelect.options[engineSelect.selectedIndex].value;
@@ -479,6 +480,7 @@
         IPTranslatorDiv.style.display='none';
         doMtDiv.style.display='none';
         googleDiv.style.display='none';
+        tildeMTDiv.style.display = 'none';
 
         // display corresponding div by selected engine name.
 	    if (selectedEngineName.toLowerCase() == "google_translate") 
