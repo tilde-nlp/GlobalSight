@@ -74,7 +74,7 @@
 <SCRIPT language=JavaScript1.2 SRC="/globalsight/includes/jquery.form.js"></SCRIPT>
 <SCRIPT language=JavaScript1.2 SRC="/globalsight/includes/jquery.loadmask.min.js"></SCRIPT>
 <SCRIPT src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/0.7.22/webcomponents.js"></SCRIPT>
-<link rel="import" href="/globalsight/includes/tildemt-selector.html">
+<link id="tildemt_link" rel="import" href="https://www.letsmt.eu/ws/tildemt-selector.html">
 <%@ include file="/envoy/wizards/guidesJavascript.jspIncl"%>
 <%@ include file="/envoy/common/warning.jspIncl"%>
 
@@ -138,6 +138,18 @@
 			}
 		});
 
+		// Load the TildeMT selector state when the web component is ready
+		var tildemt = document.getElementById("tildemt");
+		var setStateFunction = function(){
+            var stateString = document.getElementById("idTildeMTStateJson").value;
+            tildemt.setState(JSON.parse(stateString));
+		}
+		if (tildemt.loaded) {
+		    setStateFunction();
+		} else {
+		    tildemt.addEventListener("load", setStateFunction);
+		}
+
 		if(!exInfoVal)return;
 		 pushData(jsonInfo,current_engine);
 		 var exInfoVals=exInfoVal.split(",");
@@ -147,7 +159,6 @@
 		 	var key="#"+val.split("@")[0];
 		 	$(key).val(val);
 		 });
-		
 	})
 	
 	function submitForm(formAction)
@@ -1194,13 +1205,6 @@
                                  <input id="idTildeMTStateJson" style="display: none"
                                  name="<%=MTProfileConstants.MT_TILDEMT_STATE_JSON%>"
                                  value='<%=escapedJson%>'/>
-                                 <script>
-                                     var stateString = document.getElementById("idTildeMTStateJson").value;
-                                     if (stateString) {
-                                         var tildemt = document.getElementById("tildemt");
-                                         tildemt.setState(JSON.parse(stateString));
-                                     }
-                                 </script>
                              </div>
                         <!-- **************** TildeMT Options : End ******************** -->
 
