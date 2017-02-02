@@ -120,6 +120,10 @@ public class TildeMTProxy extends AbstractTranslator {
     private String preprocessTags(String original)
             throws MachineTranslationException {
         GxmlElement gxmlRoot = MTHelper.getGxmlElement(original);
+        if (gxmlRoot == null){
+            // this is a plaintext. no tag processing needed
+            return original;
+        }
         List childElements = gxmlRoot.getChildElements();
         StringBuilder preprocessed = new StringBuilder();
         for (Object item :
@@ -174,6 +178,10 @@ public class TildeMTProxy extends AbstractTranslator {
             SAXException,
             MachineTranslationException{
         GxmlElement gxmlRoot = MTHelper.getGxmlElement(original);
+        if (gxmlRoot == null){
+            // the original was a plaintext. no tag processing was done. no restoring needed
+            return translation;
+        }
         DocumentBuilderFactory factory =
                 DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
