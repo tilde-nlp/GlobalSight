@@ -73,7 +73,11 @@
 <script type="text/javascript" src="/globalsight/jquery/jquery-1.6.4.min.js"></script>
 <SCRIPT language=JavaScript1.2 SRC="/globalsight/includes/jquery.form.js"></SCRIPT>
 <SCRIPT language=JavaScript1.2 SRC="/globalsight/includes/jquery.loadmask.min.js"></SCRIPT>
+<!-- add web component support for older browsers -->
 <SCRIPT src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/0.7.22/webcomponents.js"></SCRIPT>
+<!-- Tilde MT system selection web component manages system selection and configuration by source-target language
+ pair. The system configuration is returned in JSON. The web components documentation can be found at
+ http://www.tilde.com/mt/tools/api -->
 <link id="tildemt_link" rel="import" href="https://www.letsmt.eu/ws/tildemt-selector.html">
 <%@ include file="/envoy/wizards/guidesJavascript.jspIncl"%>
 <%@ include file="/envoy/common/warning.jspIncl"%>
