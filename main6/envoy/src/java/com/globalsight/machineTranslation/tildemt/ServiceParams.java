@@ -13,13 +13,13 @@ public class ServiceParams {
     /**
      * The ClientID string on the Tilde MT platform to authenticate the API requests.
      */
-    protected String clientId;
+    public String clientId;
 
     /**
      * The GET query parameters for the request indicating the translation system, terminology
      * selection, etc., as prepared by the Tilde MT system selection web component (frontend).
      */
-    protected List<NameValuePair> requestParams;
+    public List<NameValuePair> requestParams;
 
     /**
      * Creates a new instance of the {@code ServiceParams} class initializing all of its fields.

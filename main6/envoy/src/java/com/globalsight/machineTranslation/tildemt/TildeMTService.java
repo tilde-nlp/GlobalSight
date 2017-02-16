@@ -153,10 +153,9 @@ public class TildeMTService {
      * @param jsonText translation request response JSON
      * @return the translated text and it's Quality Estimation score (can be null if QE not available/disabled).
      * @throws JSONException
-     * @throws MachineTranslationException
      */
     private TranslateResult jsonToTranslateResult(String jsonText)
-            throws JSONException, MachineTranslationException {
+            throws JSONException {
         JSONObject json = new JSONObject(jsonText);
         TranslateResult res = new TranslateResult();
         res.Translation = json.getString("translation");
